@@ -1,4 +1,4 @@
-const CACHE_NAME = 'scantocash-v4-help';
+const CACHE_NAME = 'scantocash-v5-audio';
 const ASSETS = [
   '/',
   '/index.html',
