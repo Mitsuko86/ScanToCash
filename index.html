@@ -6,7 +6,7 @@
 <meta name="description" content="Scan books instantly and check BooksRun buyback prices. Fast, mobile-friendly book scanner for resellers." />
 <title>ScanToCash</title>
 
-<!-- Build: 2024-12-18-v2-CLEAN-NO-CONDITIONS -->
+<!-- Build: 2024-12-18-v4-WITH-HELP -->
 
 <!-- PWA Meta Tags -->
 <link rel="manifest" href="manifest.json">
@@ -114,6 +114,21 @@
     align-items: center;
     gap: 8px;
   }
+
+  /* Help button */
+  .help-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 4px 8px;
+    transition: color 0.2s;
+    line-height: 1;
+  }
+  .help-btn:hover { color: var(--text); }
 
   /* Theme toggle */
   .theme-toggle {
@@ -702,6 +717,163 @@
   }
 
   /* =============================================
+     HELP MODAL
+     ============================================= */
+  .help-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+  }
+
+  .help-overlay.active { display: flex; }
+
+  .help-modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    max-width: 400px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+    animation: slideUp 0.25s ease;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .help-header {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .help-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    color: var(--text);
+    letter-spacing: -0.5px;
+  }
+
+  .help-close {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+    line-height: 1;
+  }
+
+  .help-close:hover { color: var(--text); }
+
+  .help-body {
+    padding: 20px;
+  }
+
+  .help-section {
+    margin-bottom: 20px;
+  }
+
+  .help-section:last-child { margin-bottom: 0; }
+
+  .help-section-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--accent);
+    margin-bottom: 10px;
+    letter-spacing: 0.3px;
+  }
+
+  .help-steps {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .help-step {
+    display: flex;
+    gap: 12px;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.5;
+  }
+
+  .help-step-num {
+    background: var(--accent);
+    color: #000;
+    font-weight: 700;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 11px;
+  }
+
+  .help-tips {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    margin-top: 12px;
+  }
+
+  .help-tips-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  .help-tips-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .help-tip {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--text2);
+    line-height: 1.4;
+    padding-left: 12px;
+    position: relative;
+  }
+
+  .help-tip::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+
+  /* =============================================
      LOADING DOTS
      ============================================= */
   .loading-dots::after {
@@ -811,11 +983,72 @@
 </div>
 
 <!-- =============================================
+     HELP MODAL
+     ============================================= -->
+<div class="help-overlay" id="helpOverlay" onclick="if(event.target === this) closeHelp()">
+  <div class="help-modal">
+    <div class="help-header">
+      <div class="help-title">How to Use</div>
+      <button class="help-close" onclick="closeHelp()">✕</button>
+    </div>
+    <div class="help-body">
+      <div class="help-section">
+        <div class="help-section-title">Quick Start</div>
+        <ul class="help-steps">
+          <li class="help-step">
+            <span class="help-step-num">1</span>
+            <span>Enable sound using the button in top right (optional)</span>
+          </li>
+          <li class="help-step">
+            <span class="help-step-num">2</span>
+            <span>Scan book ISBN with Bluetooth scanner or camera</span>
+          </li>
+          <li class="help-step">
+            <span class="help-step-num">3</span>
+            <span>Green "✓ BUYING" = Book worth $10+ on BooksRun</span>
+          </li>
+          <li class="help-step">
+            <span class="help-step-num">4</span>
+            <span>Tap "Add to BooksRun Cart" to sell the book</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="help-tips">
+        <div class="help-tips-title">💡 Pro Tips</div>
+        <ul class="help-tips-list">
+          <li class="help-tip">Bluetooth scanner works automatically — just scan continuously</li>
+          <li class="help-tip">Camera button lets you manually scan barcodes when needed</li>
+          <li class="help-tip">Prices shown are for "Good" condition books</li>
+          <li class="help-tip">Only books worth $10+ trigger the green "BUYING" alert</li>
+          <li class="help-tip">Recent scans are saved — tap any to re-check price</li>
+        </ul>
+      </div>
+
+      <div class="help-section" style="margin-top:20px;">
+        <div class="help-section-title">Need More Help?</div>
+        <ul class="help-steps">
+          <li class="help-step">
+            <span style="font-size:18px;">📋</span>
+            <span>Check <strong>Condition Guide</strong> below to see what BooksRun accepts</span>
+          </li>
+          <li class="help-step">
+            <span style="font-size:18px;">🔍</span>
+            <span>Use <strong>Counterfeit Check</strong> to verify book authenticity</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =============================================
      HEADER
      ============================================= -->
 <div class="header">
   <div class="logo"><span class="scan-part">Scan</span><span class="cash-part">ToCash</span></div>
   <div class="header-controls">
+    <button class="help-btn" onclick="openHelp()" title="How to use">?</button>
     <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle light/dark mode">
       <div class="theme-icons"><span>🌙</span><span>☀️</span></div>
     </button>
@@ -1301,6 +1534,24 @@ document.addEventListener('click', (e) => {
   // Don't steal focus from buttons/links
   if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A') return;
   scanInput.focus();
+});
+
+// =============================================
+// HELP MODAL
+// =============================================
+function openHelp() {
+  document.getElementById('helpOverlay').classList.add('active');
+}
+
+function closeHelp() {
+  document.getElementById('helpOverlay').classList.remove('active');
+}
+
+// Close help with Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeHelp();
+  }
 });
 
 // =============================================
