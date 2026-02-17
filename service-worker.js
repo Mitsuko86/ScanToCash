@@ -1,4 +1,4 @@
-const CACHE_NAME = 'scantocash-v3-clean';
+const CACHE_NAME = 'scantocash-v4-help';
 const ASSETS = [
   '/',
   '/index.html',
