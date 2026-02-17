@@ -1117,7 +1117,6 @@ function renderResult(isbn, result) {
   const dotClass = meetsThreshold ? 'dot-green' : 'dot-red';
 
   const actionHtml = meetsThreshold ? `
-    ${renderConditionPicker()}
     <a id="cartBtn" class="cart-btn"
        href="${buildCartUrl(isbn, selectedCondition)}"
        target="_blank" rel="noopener noreferrer">
