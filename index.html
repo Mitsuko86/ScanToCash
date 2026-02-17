@@ -6,7 +6,7 @@
 <meta name="description" content="Scan books instantly and check BooksRun buyback prices. Fast, mobile-friendly book scanner for resellers." />
 <title>ScanToCash</title>
 
-<!-- Build: 2024-12-18-v4-WITH-HELP -->
+<!-- Build: 2024-12-18-v5-AUDIO-FIX -->
 
 <!-- PWA Meta Tags -->
 <link rel="manifest" href="manifest.json">
@@ -1202,16 +1202,23 @@ function enableSound() {
 }
 
 function beep(freq = 880, dur = 110) {
-  if (!soundReady || !audioCtx) return;
-  const osc  = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.type = 'square';
-  osc.frequency.value = freq;
-  gain.gain.value = 0.1;
-  osc.connect(gain);
-  gain.connect(audioCtx.destination);
-  osc.start();
-  setTimeout(() => osc.stop(), dur);
+  if (!audioCtx) return;
+  
+  // CRITICAL iOS FIX: Always resume AudioContext before playing
+  // iOS suspends it when app backgrounds, screen locks, etc.
+  audioCtx.resume().then(() => {
+    const osc  = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'square';
+    osc.frequency.value = freq;
+    gain.gain.value = 0.1;
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    setTimeout(() => osc.stop(), dur);
+  }).catch(() => {
+    // Audio context blocked - silently fail
+  });
 }
 
 function vibrate(p) {
