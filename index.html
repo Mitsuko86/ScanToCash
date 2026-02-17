@@ -717,6 +717,29 @@
   .quick-link:hover .quick-link-arrow { color: var(--accent); }
 
   /* =============================================
+     FOOTER
+     ============================================= */
+  .footer {
+    text-align: center;
+    padding: 20px 16px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.5;
+    letter-spacing: 0.3px;
+  }
+
+  .footer a {
+    color: var(--muted);
+    text-decoration: underline;
+    transition: color 0.2s;
+  }
+
+  .footer a:hover {
+    color: var(--text2);
+  }
+
+  /* =============================================
      LOADING DOTS
      ============================================= */
   .loading-dots::after {
@@ -916,6 +939,12 @@
         <span class="quick-link-arrow">↗</span>
       </a>
     </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    We may earn a commission when you sell books through BooksRun.<br>
+    <a href="https://www.ftc.gov/legal-library/browse/rules/guides-concerning-use-endorsements-testimonials-advertising" target="_blank" rel="noopener noreferrer">Affiliate Disclosure</a>
   </div>
 
   <div class="spacer"></div>
@@ -1125,10 +1154,10 @@ async function fetchBooksRun(isbn13) {
     const result  = br?.result ?? null;
 
     if (result?.status === 'success') {
-      const avgRaw = result?.text?.Average;
+      const goodRaw = result?.text?.Good;  // Use "Good" condition price instead of Average
       let avg = null;
-      if (avgRaw != null && avgRaw !== '') {
-        const n = Number(avgRaw);
+      if (goodRaw != null && goodRaw !== '') {
+        const n = Number(goodRaw);
         if (!isNaN(n)) avg = n;
       }
       return { ok: true, avgUsd: avg, msg: avg == null ? 'No price returned.' : null };
@@ -1188,7 +1217,7 @@ function renderResult(isbn, result) {
   const priceHtml = hasPrice
     ? `<div class="price-block">
          <div class="price-amount">$${result.avgUsd.toFixed(2)}</div>
-         <div class="price-label">Avg payout</div>
+         <div class="price-label">Good condition</div>
        </div>`
     : `<div class="price-block">
          <div class="price-amount" style="opacity:0.4">—</div>
@@ -1198,6 +1227,7 @@ function renderResult(isbn, result) {
   const dotClass = meetsThreshold ? 'dot-green' : 'dot-red';
 
   const actionHtml = meetsThreshold ? `
+    ${renderConditionPicker()}
     <a id="cartBtn" class="cart-btn"
        href="${buildCartUrl(isbn, selectedCondition)}"
        target="_blank" rel="noopener noreferrer">
